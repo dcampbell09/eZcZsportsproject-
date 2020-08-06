@@ -69,17 +69,17 @@ ggplot(data=one_two_yr_players,aes(x=wRC.))+
 ```
 
 ```{r}
+corr_var <- season_2%>%
+  dplyr::select(BABIP,AVG,OBP,SLG,wOBA,BB.,K.,'wRC.')
+
+chart.Correlation(corr_var[,-1])
+```
+
+```{r}
 #install plotly
 install.packages('plotly')
 library(plotly)
-
-```{r}
-#scale BB% & K% between 1st and 2nd year
-ggplotly(
-  ggplot(data=one_two_yr_players,aes(x=scale(BB.),y=scale(K.)))+
-    geom_point(aes(color=cs,text=Name))+
-    theme_bw()+facet_wrap(~cs)+geom_smooth()
-)
+```
 
 ```{r}
 #label 1st season as x, 2nd season as y
@@ -89,7 +89,6 @@ x <- one_two_yr_players%>%
 y <- one_two_yr_players%>%
   filter(cs==2)%>%
   select(wRC.)
-
 ```
 
 ```{r}
@@ -120,42 +119,6 @@ combined <- combined%>%mutate(
 ```
 
 ```{r}
-#walk % in relation to wRC ratio 
-ggplotly(
-ggplot(data=combined,aes(x=BB..x,y=BB..y))+
-  geom_point(aes(col=wrc_ratio,text=Name.x))+
-  theme_bw()+
-  geom_smooth(method="lm")+
-  labs(x="BB% Season 1",
-       y="BB% Season 2")  +
-  scale_colour_gradientn(colours = terrain.colors(10))+
-  ggtitle("BB% Season 2 vs. BB% Season 1")
-)
-lm_BB <- lm(data=combined,BB..y~BB..x)
-summary(lm_BB)
-par(mfrow=c(2,2))
-plot(lm_BB)
-```
-
-```{r}
-#ISO in relation to wRC ratio
-ggplotly(
-  ggplot(data=combined,aes(x=ISO.x,y=ISO.y))+
-    geom_point(aes(col=wrc_ratio,text=Name.x))+
-    theme_bw()+
-    geom_smooth(method="lm")+
-    labs(x="ISO Season 1",
-         y="ISO Season 2")  +
-    scale_colour_gradientn(colours = terrain.colors(10))+
-    ggtitle("ISO Season 2 vs. ISO Season 1")
-)
-
-lm_ISO <- lm(data=combined,ISO.y~ISO.x)
-summary(lm_ISO)
-par(mfrow=c(2,2))
-plot(lm_ISO)
-
-```{r}
 #wOBA in relation to wRC ratio
 ggplotly(
   ggplot(data=combined,aes(x=wOBA.x,y=wOBA.y))+
@@ -172,8 +135,7 @@ lm_wOBA <- lm(data=combined,wOBA.y~wOBA.x)
 summary(lm_wOBA)
 par(mfrow=c(2,2))
 plot(lm_wOBA)
-
-#find outliers and remove them using NHL Data from Case Study
+```
 
 ```{r}
 #import secondary data to find plate discipline 
